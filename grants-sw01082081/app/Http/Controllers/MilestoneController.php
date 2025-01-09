@@ -40,30 +40,31 @@ class MilestoneController extends Controller
     // Show a single milestone's details
     public function show(Milestone $milestone)
     {
-        return view('milestones.show', compact('milestone'));
+        $grant = $milestone->grant; 
+        return view('milestones.show', compact('milestone', 'grant'));
     }
 
     // Show form to edit a milestone
     public function edit(Milestone $milestone)
-    {
-        $grants = Grant::all();
-        return view('milestones.edit', compact('milestone', 'grants'));
-    }
+{
+    return view('milestones.edit', compact('milestone'));
+}
 
-    // Update an existing milestone
-    public function update(Request $request, Milestone $milestone)
-    {
-        $request->validate([
-            'name' => 'required',
-            'target_date' => 'required|date',
-            'deliverable' => 'required',
-            'status' => 'required|in:Pending,In Progress,Completed',
-            'grant_id' => 'required|exists:grants,id',
-        ]);
+public function update(Request $request, Milestone $milestone)
+{
+    $request->validate([
+        'name' => 'required',
+        'target_date' => 'required|date',
+        'deliverable' => 'required',
+        'status' => 'required|in:Pending,In Progress,Completed',
+        'remark' => 'nullable|string|max:255',
+        'date_updated' => 'required|date',
+    ]);
 
-        $milestone->update($request->all());
-        return redirect()->route('milestones.index')->with('success', 'Milestone updated successfully!');
-    }
+    $milestone->update($request->all());
+    return redirect()->route('milestones.index')->with('success', 'Milestone updated successfully!');
+}
+
 
     // Delete a milestone
     public function destroy(Milestone $milestone)

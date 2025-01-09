@@ -10,7 +10,7 @@ class Academician extends Model
 
     public function grants()
     {
-        return $this->belongsToMany(Grant::class, 'academician_grant');
+        return $this->belongsToMany(Grant::class, 'academician_grant', 'academician_id', 'grant_id');
     }
 
     public function leadingGrants()

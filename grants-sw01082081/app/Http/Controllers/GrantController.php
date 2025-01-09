@@ -41,31 +41,38 @@ class GrantController extends Controller
     // Show a single grant's details
     public function show(Grant $grant)
     {
-        return view('grants.show', compact('grant'));
+        $milestones = $grant->milestones;
+        return view('grants.show', compact('grant', 'milestones'));
     }
 
     // Show form to edit a grant
     public function edit(Grant $grant)
-    {
-        $academicians = Academician::all();
-        return view('grants.edit', compact('grant', 'academicians'));
-    }
+{
+    $academicians = Academician::all(); // Fetch all academicians for selection
+    $members = $grant->academicians; // Existing members
+    return view('grants.edit', compact('grant', 'academicians', 'members'));
+}
 
-    // Update an existing grant
-    public function update(Request $request, Grant $grant)
-    {
-        $request->validate([
-            'title' => 'required',
-            'amount' => 'required|numeric|min:0',
-            'provider' => 'required',
-            'start_date' => 'required|date',
-            'duration_months' => 'required|integer|min:1',
-            'project_leader_id' => 'required|exists:academicians,id',
-        ]);
+public function update(Request $request, Grant $grant)
+{
+    $request->validate([
+        'title' => 'required',
+        'amount' => 'required|numeric|min:0',
+        'provider' => 'required',
+        'start_date' => 'required|date',
+        'duration_months' => 'required|integer|min:1',
+        'project_leader_id' => 'required|exists:academicians,id',
+        'project_members' => 'nullable|array',
+        'project_members.*' => 'exists:academicians,id',
+    ]);
 
-        $grant->update($request->all());
-        return redirect()->route('grants.index')->with('success', 'Grant updated successfully!');
-    }
+    $grant->update($request->only(['title', 'amount', 'provider', 'start_date', 'duration_months', 'project_leader_id']));
+
+    // Sync project members
+    $grant->academicians()->sync($request->input('project_members', []));
+
+    return redirect()->route('grants.index')->with('success', 'Grant updated successfully!');
+}
 
     // Delete a grant
     public function destroy(Grant $grant)

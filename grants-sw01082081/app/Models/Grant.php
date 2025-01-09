@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grant extends Model
 {
-    protected $fillable = ['title', 'amount', 'provider', 'start_date', 'duration_months', 'project_leader_id'];
+    protected $fillable = ['title', 'amount', 'provider', 'start_date', 'duration_months', 'project_leader_id','grant_id'];
 
     public function academicians()
     {
-        return $this->belongsToMany(Academician::class, 'academician_grant');
+        return $this->belongsToMany(Academician::class, 'academician_grant', 'grant_id', 'academician_id');
     }
 
     public function milestones()
     {
-        return $this->hasMany(Milestone::class);
+        return $this->hasMany(Milestone::class,'grant_id');
     }
 
     public function projectLeader()

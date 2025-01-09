@@ -38,7 +38,9 @@ class AcademicianController extends Controller
     // Show a single academician's details
     public function show(Academician $academician)
     {
-        return view('academicians.show', compact('academician'));
+        $grants = $academician->grants;
+        return view('academicians.show', compact('academician', 'grants'));
+
     }
 
     // Show form to edit an academician
