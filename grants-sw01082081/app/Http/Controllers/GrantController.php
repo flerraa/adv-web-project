@@ -3,63 +3,74 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grant;
+use App\Models\Academician;
 use Illuminate\Http\Request;
 
 class GrantController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Display all grants
     public function index()
     {
-        //
+        $grants = Grant::with('projectLeader')->get();
+        return view('grants.index', compact('grants'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Show form to create a new grant
     public function create()
     {
-        //
+        $academicians = Academician::all();
+        return view('grants.create', compact('academicians'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Store a newly created grant
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'amount' => 'required|numeric|min:0',
+            'provider' => 'required',
+            'start_date' => 'required|date',
+            'duration_months' => 'required|integer|min:1',
+            'project_leader_id' => 'required|exists:academicians,id',
+        ]);
+
+        Grant::create($request->all());
+        return redirect()->route('grants.index')->with('success', 'Grant created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Show a single grant's details
     public function show(Grant $grant)
     {
-        //
+        return view('grants.show', compact('grant'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // Show form to edit a grant
     public function edit(Grant $grant)
     {
-        //
+        $academicians = Academician::all();
+        return view('grants.edit', compact('grant', 'academicians'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Update an existing grant
     public function update(Request $request, Grant $grant)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'amount' => 'required|numeric|min:0',
+            'provider' => 'required',
+            'start_date' => 'required|date',
+            'duration_months' => 'required|integer|min:1',
+            'project_leader_id' => 'required|exists:academicians,id',
+        ]);
+
+        $grant->update($request->all());
+        return redirect()->route('grants.index')->with('success', 'Grant updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Delete a grant
     public function destroy(Grant $grant)
     {
-        //
+        $grant->delete();
+        return redirect()->route('grants.index')->with('success', 'Grant deleted successfully!');
     }
 }

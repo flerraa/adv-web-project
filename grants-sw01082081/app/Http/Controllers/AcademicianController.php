@@ -7,59 +7,65 @@ use Illuminate\Http\Request;
 
 class AcademicianController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Display all academicians
     public function index()
     {
-        //
+        $academicians = Academician::all();
+        return view('academicians.index', compact('academicians'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Show form to create a new academician
     public function create()
     {
-        //
+        return view('academicians.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Store a newly created academician
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:academicians',
+            'college' => 'required',
+            'department' => 'required',
+            'position' => 'required',
+        ]);
+
+        Academician::create($request->all());
+        return redirect()->route('academicians.index')->with('success', 'Academician created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Show a single academician's details
     public function show(Academician $academician)
     {
-        //
+        return view('academicians.show', compact('academician'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // Show form to edit an academician
     public function edit(Academician $academician)
     {
-        //
+        return view('academicians.edit', compact('academician'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Update an existing academician
     public function update(Request $request, Academician $academician)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:academicians,email,' . $academician->id,
+            'college' => 'required',
+            'department' => 'required',
+            'position' => 'required',
+        ]);
+
+        $academician->update($request->all());
+        return redirect()->route('academicians.index')->with('success', 'Academician updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Delete an academician
     public function destroy(Academician $academician)
     {
-        //
+        $academician->delete();
+        return redirect()->route('academicians.index')->with('success', 'Academician deleted successfully!');
     }
 }
