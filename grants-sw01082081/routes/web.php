@@ -6,8 +6,8 @@ use App\Http\Controllers\GrantController;
 use App\Http\Controllers\MilestoneController;
 
 Route::get('/', function () {
-    return view('home');
-})->name('home');
+    return view('welcome');
+})->name('welcome');
 
 Route::resource('academicians', AcademicianController::class);
 Route::resource('grants', GrantController::class);
