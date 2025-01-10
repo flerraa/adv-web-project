@@ -1,42 +1,72 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <h2>Grants</h2>
-    <a href="{{ route('grants.create') }}" class="btn btn-primary mb-3">Add Grant</a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Amount</th>
-                <th>Provider</th>
-                <th>Start Date</th>
-                <th>Duration (Months)</th>
-                <th>Project Leader</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($grants as $grant)
-            <tr>
-                <td>{{ $grant->title }}</td>
-                <td>${{ number_format($grant->amount, 2) }}</td>
-                <td>{{ $grant->provider }}</td>
-                <td>{{ $grant->start_date }}</td>
-                <td>{{ $grant->duration_months }}</td>
-                <td>{{ $grant->projectLeader->name }}</td>
-                <td>
-                    <a href="{{ route('grants.show', $grant->id) }}" class="btn btn-info btn-sm">View</a>
-                    <a href="{{ route('grants.edit', $grant->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ route('grants.destroy', $grant->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Research Grants</h2>
+        <a href="{{ route('grants.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Grant
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Provider</th>
+                            <th>Start Date</th>
+                            <th>Duration</th>
+                            <th>Project Leader</th>
+                            <th>Members</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($grants as $grant)
+                        <tr>
+                            <td>{{ $grant->title }}</td>
+                            <td>${{ number_format($grant->amount, 2) }}</td>
+                            <td>{{ $grant->provider }}</td>
+                            <td>{{ $grant->start_date->format('d M Y') }}</td>
+                            <td>{{ $grant->duration_months }} months</td>
+                            <td>{{ $grant->projectLeader->name }}</td>
+                            <td>{{ $grant->members->count() }}</td>
+                            <td>
+                                @php
+                                    $endDate = $grant->start_date->addMonths($grant->duration_months);
+                                    $status = now()->lt($endDate) ? 'Active' : 'Completed';
+                                @endphp
+                                <span class="badge bg-{{ $status == 'Active' ? 'success' : 'secondary' }}">
+                                    {{ $status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('grants.show', $grant->id) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('grants.edit', $grant->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('grants.destroy', $grant->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                        onclick="return confirm('Are you sure you want to delete this grant?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

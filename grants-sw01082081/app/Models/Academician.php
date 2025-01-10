@@ -3,18 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Academician extends Model
 {
-    protected $fillable = ['name', 'email', 'college', 'department', 'position'];
+    use HasFactory;
 
-    public function grants()
-    {
-        return $this->belongsToMany(Grant::class, 'academician_grant', 'academician_id', 'grant_id');
-    }
+    protected $fillable = [
+        'name',
+        'email',
+        'college',
+        'department',
+        'position'
+    ];
 
-    public function leadingGrants()
+    public function ledGrants()
     {
         return $this->hasMany(Grant::class, 'project_leader_id');
+    }
+
+    public function memberGrants()
+    {
+        return $this->belongsToMany(Grant::class, 'academician_grant');
     }
 }

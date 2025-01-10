@@ -49,19 +49,6 @@
             </select>
         </div>
 
-        <!-- Project Members -->
-        <div class="mb-3">
-            <label>Project Members</label>
-            <select name="project_members[]" class="form-control" multiple>
-                @foreach($academicians as $academician)
-                <option value="{{ $academician->id }}" {{ $members->contains($academician->id) ? 'selected' : '' }}>
-                    {{ $academician->name }}
-                </option>
-                @endforeach
-            </select>
-            <small class="text-muted">Hold Ctrl (Cmd on Mac) to select multiple members.</small>
-        </div>
-
         <!-- Submit Button -->
         <button type="submit" class="btn btn-success">Update Grant</button>
     </form>

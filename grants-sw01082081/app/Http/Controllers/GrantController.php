@@ -11,14 +11,14 @@ class GrantController extends Controller
     // Display all grants
     public function index()
     {
-        $grants = Grant::with('projectLeader')->get();
+        $grants = Grant::with('projectLeader')->get(); // Eager load project leader relationship
         return view('grants.index', compact('grants'));
     }
 
-    // Show form to create a new grant
+    // Show the form for creating a new grant
     public function create()
     {
-        $academicians = Academician::all();
+        $academicians = Academician::all(); // Fetch all academicians for dropdown
         return view('grants.create', compact('academicians'));
     }
 
@@ -38,46 +38,65 @@ class GrantController extends Controller
         return redirect()->route('grants.index')->with('success', 'Grant created successfully!');
     }
 
-    // Show a single grant's details
+    // Show the details of a specific grant
     public function show(Grant $grant)
     {
-        $milestones = $grant->milestones;
-        return view('grants.show', compact('grant', 'milestones'));
+        $grant->load('projectLeader', 'members', 'milestones');
+        $availableMembers = Academician::whereNotIn('id', $grant->members->pluck('id'))
+                                  ->where('id', '!=', $grant->project_leader_id)
+                                  ->get();
+    return view('grants.show', compact('grant', 'availableMembers'));
     }
 
-    // Show form to edit a grant
+    // Show the form for editing a grant
     public function edit(Grant $grant)
-{
-    $academicians = Academician::all(); // Fetch all academicians for selection
-    $members = $grant->academicians; // Existing members
-    return view('grants.edit', compact('grant', 'academicians', 'members'));
-}
+    {
+        $academicians = Academician::all(); // Fetch all academicians for dropdown
+        return view('grants.edit', compact('grant', 'academicians'));
+    }
 
-public function update(Request $request, Grant $grant)
-{
-    $request->validate([
-        'title' => 'required',
-        'amount' => 'required|numeric|min:0',
-        'provider' => 'required',
-        'start_date' => 'required|date',
-        'duration_months' => 'required|integer|min:1',
-        'project_leader_id' => 'required|exists:academicians,id',
-        'project_members' => 'nullable|array',
-        'project_members.*' => 'exists:academicians,id',
-    ]);
+    // Update an existing grant
+    public function update(Request $request, Grant $grant)
+    {
+        $request->validate([
+            'title' => 'required',
+            'amount' => 'required|numeric|min:0',
+            'provider' => 'required',
+            'start_date' => 'required|date',
+            'duration_months' => 'required|integer|min:1',
+            'project_leader_id' => 'required|exists:academicians,id',
+        ]);
 
-    $grant->update($request->only(['title', 'amount', 'provider', 'start_date', 'duration_months', 'project_leader_id']));
+        $grant->update($request->all());
+        return redirect()->route('grants.index')->with('success', 'Grant updated successfully!');
+    }
 
-    // Sync project members
-    $grant->academicians()->sync($request->input('project_members', []));
-
-    return redirect()->route('grants.index')->with('success', 'Grant updated successfully!');
-}
-
-    // Delete a grant
+    // Delete an existing grant
     public function destroy(Grant $grant)
     {
         $grant->delete();
         return redirect()->route('grants.index')->with('success', 'Grant deleted successfully!');
     }
+
+
+    public function addMember(Request $request, Grant $grant)
+{
+    $request->validate([
+        'member_id' => 'required|exists:academicians,id'
+    ]);
+
+    if (!$grant->members->contains($request->member_id)) {
+        $grant->members()->attach($request->member_id);
+    }
+
+    return redirect()->back()->with('success', 'Member added successfully!');
 }
+
+public function removeMember(Request $request, Grant $grant)
+{
+    $grant->members()->detach($request->member_id);
+    return redirect()->back()->with('success', 'Member removed successfully!');
+}
+
+}
+

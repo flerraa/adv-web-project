@@ -4,133 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Grant Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
-        /* General Layout */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+        }
+
         body {
-            display: flex;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
 
-        /* Sidebar Styling */
         .sidebar {
+            background: var(--primary-color);
+            min-height: 100vh;
             width: 250px;
-            height: 100vh;
-            background-color: #343a40;
-            color: #fff;
             position: fixed;
-            transition: transform 0.3s ease, width 0.3s ease;
-            z-index: 1000;
+            top: 0;
+            left: 0;
+            transition: all 0.3s;
         }
 
-        .sidebar.hidden {
-            transform: translateX(-250px);
-        }
-
-        .sidebar a {
+        .sidebar .nav-link {
             color: #fff;
-            text-decoration: none;
-            padding: 10px 15px;
-            display: block;
-            transition: all 0.3s ease;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            transition: all 0.3s;
         }
 
-        .sidebar a:hover {
-            background-color: #495057;
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: var(--accent-color);
+            color: white;
         }
 
-        .sidebar a.active {
-            background-color: #007bff;
+        .sidebar .nav-link i {
+            margin-right: 10px;
         }
 
-        .sidebar .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-        }
-
-        /* Content Area */
-        .content {
+        .content-wrapper {
             margin-left: 250px;
             padding: 20px;
-            flex-grow: 1;
-            transition: margin-left 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .content.expanded {
-            margin-left: 0;
-        }
-
-        /* Toggle Button */
-        .toggle-btn {
-            position: fixed;
-            top: 15px;
-            left: 260px;
-            z-index: 1100;
-            background-color: #007bff;
-            color: #fff;
+        .card {
             border: none;
-            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            border: none;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .status-badge {
             padding: 5px 10px;
-            cursor: pointer;
-            transition: left 0.3s ease;
+            border-radius: 15px;
+            font-size: 0.9em;
         }
 
-        .toggle-btn.collapsed {
-            left: 10px;
-        }
+        .status-pending { background: #ffeeba; color: #856404; }
+        .status-progress { background: #cce5ff; color: #004085; }
+        .status-completed { background: #d4edda; color: #155724; }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-250px);
-            }
-
-            .sidebar.hidden {
-                transform: translateX(-250px);
-            }
-
-            .content {
-                margin-left: 0;
-            }
-
-            .toggle-btn.collapsed {
-                left: 10px;
-            }
+        .select2-container .select2-selection--multiple {
+            min-height: 38px;
         }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="logo">RGMS</div>
-        <a href="{{ route('welcome') }}" class="{{ request()->routeIs('welcome') ? 'active' : '' }}">Dashboard</a>
-        <a href="{{ route('academicians.index') }}" class="{{ request()->routeIs('academicians.*') ? 'active' : '' }}">Academicians</a>
-        <a href="{{ route('grants.index') }}" class="{{ request()->routeIs('grants.*') ? 'active' : '' }}">Grants</a>
-        <a href="{{ route('milestones.index') }}" class="{{ request()->routeIs('milestones.*') ? 'active' : '' }}">Milestones</a>
+<nav class="sidebar">
+    <div class="p-3">
+        <h4 class="text-white mb-4">RGMS</h4>
+        <div class="nav flex-column">
+            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ route('academicians.index') }}" class="nav-link {{ request()->routeIs('academicians.*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Academicians
+            </a>
+            <a href="{{ route('grants.index') }}" class="nav-link {{ request()->routeIs('grants.*') ? 'active' : '' }}">
+                <i class="fas fa-file-contract"></i> Grants
+            </a>
+            <a href="{{ route('milestones.index') }}" class="nav-link {{ request()->routeIs('milestones.*') ? 'active' : '' }}">
+                <i class="fas fa-flag"></i> Milestones
+            </a>
+        </div>
     </div>
+</nav>
 
-    <!-- Toggle Button -->
-    <button class="toggle-btn" id="toggle-btn">☰</button>
+    <!-- Content -->
+    <div class="content-wrapper">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-    <!-- Main Content -->
-    <div class="content" id="content">
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         @yield('content')
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-        const toggleBtn = document.getElementById('toggle-btn');
-
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-            content.classList.toggle('expanded');
-            toggleBtn.classList.toggle('collapsed');
+        $(document).ready(function() {
+            $('.select2').select2({
+                theme: 'bootstrap-5'
+            });
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 </html>
