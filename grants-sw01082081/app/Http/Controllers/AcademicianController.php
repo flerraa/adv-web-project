@@ -25,6 +25,7 @@ class AcademicianController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'staff_number' => 'required|string|unique:academicians', 
             'email' => 'required|email|unique:academicians',
             'college' => 'required',
             'department' => 'required',
@@ -54,7 +55,9 @@ class AcademicianController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:academicians,email,' . $academician->id,
+            'staff_number' => 'required|string|unique:academicians,staff_number,' . $academician->id . ',id',
+            'email' => 'required|email|unique:academicians,email,' . $academician->id . ',id',
+             'college' => 'required',
             'college' => 'required',
             'department' => 'required',
             'position' => 'required',

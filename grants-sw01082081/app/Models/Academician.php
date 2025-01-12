@@ -11,6 +11,7 @@ class Academician extends Model
 
     protected $fillable = [
         'name',
+        'staff_number',
         'email',
         'college',
         'department',

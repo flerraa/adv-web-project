@@ -15,36 +15,41 @@
     </div>
 
     <div class="row">
+        
         <!-- Personal Information -->
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Personal Information</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="fw-bold">Name:</label>
-                        <p>{{ $academician->name }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold">Email:</label>
-                        <p>{{ $academician->email }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold">Position:</label>
-                        <p>{{ $academician->position }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold">College:</label>
-                        <p>{{ $academician->college }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold">Department:</label>
-                        <p>{{ $academician->department }}</p>
-                    </div>
-                </div>
+<div class="col-md-4">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Personal Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="fw-bold">Name:</label>
+                <p>{{ $academician->name }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold">Staff Number:</label>
+                <p>{{ $academician->staff_number }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold">Email:</label>
+                <p>{{ $academician->email }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold">Position:</label>
+                <p>{{ $academician->position }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold">College:</label>
+                <p>{{ $academician->college }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold">Department:</label>
+                <p>{{ $academician->department }}</p>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Grants as Leader -->
         <div class="col-md-8">

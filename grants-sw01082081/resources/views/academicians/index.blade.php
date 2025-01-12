@@ -16,6 +16,7 @@
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Staff Number</th>
                             <th>Email</th>
                             <th>Position</th>
                             <th>College</th>
@@ -29,6 +30,7 @@
                         @foreach($academicians as $academician)
                         <tr>
                             <td>{{ $academician->name }}</td>
+                            <td>{{ $academician->staff_number }}</td>
                             <td>{{ $academician->email }}</td>
                             <td>{{ $academician->position }}</td>
                             <td>{{ $academician->college }}</td>

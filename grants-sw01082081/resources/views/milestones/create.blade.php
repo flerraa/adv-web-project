@@ -13,20 +13,19 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="grant_id" class="form-label">Research Grant</label>
-                            <select name="grant_id" id="grant_id" class="form-control select2 @error('grant_id') is-invalid @enderror" required>
-                                <option value="">Select Grant...</option>
-                                @foreach($grants as $grant)
-                                    <option value="{{ $grant->id }}" 
-                                        {{ old('grant_id') == $grant->id ? 'selected' : '' }}>
-                                        {{ $grant->title }} ({{ $grant->projectLeader->name }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('grant_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+    <label for="grant_id">Research Grant</label>
+    <select name="grant_id" id="grant_id" class="form-control" required>
+        <option value="">Select Grant...</option>
+        @foreach($grants as $grant)
+            <option value="{{ $grant->id }}" {{ old('grant_id') == $grant->id ? 'selected' : '' }}>
+                {{ $grant->title }} ({{ $grant->projectLeader->name }})
+            </option>
+        @endforeach
+    </select>
+    @error('grant_id')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Milestone Name</label>

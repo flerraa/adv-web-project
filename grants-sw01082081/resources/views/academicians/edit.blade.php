@@ -23,6 +23,15 @@
                         </div>
 
                         <div class="mb-3">
+                             <label for="staff_number" class="form-label">Staff Number</label>
+                            <input type="text" class="form-control @error('staff_number') is-invalid @enderror" 
+                            id="staff_number" name="staff_number" value="{{ old('staff_number', $academician->staff_number) }}" required>
+                             @error('staff_number')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                 id="email" name="email" value="{{ old('email', $academician->email) }}" required>

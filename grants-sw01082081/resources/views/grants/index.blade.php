@@ -34,7 +34,10 @@
                             <td>{{ $grant->provider }}</td>
                             <td>{{ $grant->start_date->format('d M Y') }}</td>
                             <td>{{ $grant->duration_months }} months</td>
-                            <td>{{ $grant->projectLeader->name }}</td>
+                            <td>
+                                {{ $grant->projectLeader->name }}
+                                <small class="text-muted d-block">{{ $grant->projectLeader->staff_number }}</small>
+                            </td>
                             <td>{{ $grant->members->count() }}</td>
                             <td>
                                 @php
@@ -46,17 +49,18 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('grants.show', $grant->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('grants.show', $grant->id) }}" class="btn btn-info btn-sm" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('grants.edit', $grant->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('grants.edit', $grant->id) }}" class="btn btn-warning btn-sm" title="Edit Grant">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('grants.destroy', $grant->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" 
-                                        onclick="return confirm('Are you sure you want to delete this grant?')">
+                                        onclick="return confirm('Are you sure you want to delete this grant?')"
+                                        title="Delete Grant">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
